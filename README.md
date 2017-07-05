@@ -41,7 +41,7 @@ main = specIO $ do
       pure $ name `shouldBe` "Foo"
 ```
 
-You can find more information about `SpecIO` [here]().
+You can find more information about `SpecIO` [here](#specio).
 
 ### Expectations
 Currently this framework provides you with:
