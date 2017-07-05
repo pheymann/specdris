@@ -63,6 +63,17 @@ Currently this framework provides you with:
 |`a shouldBeFalse` | | is `a` `False`|
 |`a shouldSatisfy pred`| | satisfies `a` a given predicate|
 
+### Failed Test Cases
+If an expectations in a test case failes the following expectations aren't executed and the
+whole case is marked as failure:
+
+```Idris
+  it "failing test" $ do
+    1 `shouldBe` 1 -- success
+    2 `shouldBe` 1 -- failes
+    2 `shouldBe` 2 -- will not be executed
+```
+
 ### SpecIO
 Besides the usual test cases you can also add effects as:
 
