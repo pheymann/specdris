@@ -24,7 +24,7 @@ This is my math test
   + do fancy stuff with complex numbers
     [] pending: do this later -- yellow
     
-Failed: Total = 3, Failed = 1, Pending = 1 -- read
+Failed: Total = 3, Failed = 1, Pending = 1 -- red
 ```
 
 You can also test your `IO` code:
