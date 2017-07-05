@@ -1,0 +1,12 @@
+package specdris_tests
+
+opts = "--sourcepath ../src/ --idrispath ../src/"
+
+modules = Specdris.SpecTest,
+          Specdris.SpecIOTest,
+          Specdris.ExpectationsTest,
+          Specdris.TestUtil
+
+tests = Specdris.ExpectationsTest.specSuite,
+        Specdris.SpecTest.specSuite,
+        Specdris.SpecIOTest.specSuite

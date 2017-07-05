@@ -1,0 +1,14 @@
+package specdris
+
+sourcedir = src
+
+modules = Specdris.Spec,
+          Specdris.SpecIO,
+          Specdris.Core,
+          Specdris.Console,
+          Specdris.Expectations,
+          Specdris.Data.SpecAction,
+          Specdris.Data.SpecResult,
+          Specdris.Data.SpecState
+
+tests = test.Specdris.SpecTest

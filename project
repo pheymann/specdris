@@ -1,0 +1,64 @@
+#!/bin/bash
+
+declare -r project="specdris.iqkg"
+declare -r test="test.iqkg"
+
+clean()
+{
+    echo "clean project"
+    idris --clean ${project}
+    cd test; idris --clean ${test}; cd ..
+}
+
+test()
+{
+    echo "test project"
+    cd test; idris --testpkg ${test}; cd ..
+}
+
+buildNoTest()
+{
+    echo "build project"
+    idris --build ${project}
+}
+
+build()
+{
+    buildNoTest
+    test
+}
+
+install()
+{
+    echo "install project"
+    clean
+    test
+    idris --install ${project}
+}
+
+case $1 in
+    "--clean")
+        clean
+        ;;
+    "--build")
+        build
+        ;;
+    "--buildNoTest")
+        buildNoTest
+        ;;
+    "--test")
+        test
+        ;;
+    "--install")
+        install
+        ;;
+    "--help")
+        echo "usage: './project [command]'"
+        echo "  --clean: cleans the project"
+        echo "  --build: builds the code and runs all tests"
+        echo "  --test: runs all tests"
+        ;;
+    *)
+        echo "unknown command, use '--help' for help"
+        ;;
+esac

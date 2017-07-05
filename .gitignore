@@ -1,0 +1,8 @@
+# ide
+*.idr~
+*.gitignore~
+project~
+*.iqkg~
+
+# idris
+*.ibc
