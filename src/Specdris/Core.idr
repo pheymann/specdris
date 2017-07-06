@@ -1,6 +1,5 @@
 module Specdris.Core
 
-import Specdris.Data.SpecAction
 import Specdris.Data.SpecResult
 import Specdris.Data.SpecState
 
@@ -19,18 +18,10 @@ public export
 SpecTree : Type
 SpecTree = Tree (IO SpecResult)
 
-{- Transforms the lazy spec test description into a Tree representation.
-   By doing this we create an instance for every spec case rather than
-   having a lazy `Bind`.
-   
-   The spec cases are not evaluated yet as they are described with `IO`.-} 
-buildSpecTree : SpecAction -> (around : IO SpecResult -> IO SpecResult) -> SpecTree
-buildSpecTree (Describe message) _      = Leaf (pure (Print message "" White))
-buildSpecTree (It message spec)  around = Node (Leaf (pure (Print message " +" White))) (Leaf (around spec))
-buildSpecTree (Bind actions f)   around = let bindActions = f () in
-                                              case buildSpecTree actions around of
-                                                lResult => case buildSpecTree bindActions around of
-                                                             rResult => Node lResult rResult
+namespace SpecTreeDo
+  (>>=) : SpecTree -> (() -> SpecTree) -> SpecTree
+  (>>=) leftTree f = let rightTree = f () in
+                         Node leftTree rightTree
 
 {- Prints the description for `describe`, `it`, `pending` or the failure message
    to the console. Depending on the result of the spec case the `SpecState` 
@@ -56,15 +47,17 @@ updateStateAndPrint (BinaryFailure a b reason) state level = do putStrLn (format
 
 {- Evaluates every leaf in the `SpecTree` and folds the different `IO`s to collect
    a final `SpecState`.-}
-evaluateTree : SpecTree -> SpecState -> (level : Nat) -> IO SpecState
-evaluateTree (Leaf specIO) state level = do result <- specIO
-                                            updateStateAndPrint result state level
+evaluateTree : SpecTree -> SpecState -> (around : IO SpecResult -> IO SpecResult) -> (level : Nat) -> IO SpecState
+evaluateTree (Leaf specIO) state around level 
+  = do result <- (around specIO)
+       updateStateAndPrint result state level
                                           
-evaluateTree (Node left right) state level = case left of
-                                               (Leaf _) => do newState <- evaluateTree left state (level + 1)
-                                                              evaluateTree right newState (level + 1)
-                                               _        => do newState <- evaluateTree left state level
-                                                              evaluateTree right newState level
+evaluateTree (Node left right) state around level 
+  = case left of
+        (Leaf _) => do newState <- evaluateTree left state around (level + 1)
+                       evaluateTree right newState around (level + 1)
+        _        => do newState <- evaluateTree left state around level
+                       evaluateTree right newState around level
 
-evaluate : (around : IO SpecResult -> IO SpecResult) -> SpecAction -> IO SpecState
-evaluate around actions = evaluateTree (buildSpecTree actions around) neutral 0
+evaluate : (around : IO SpecResult -> IO SpecResult) -> SpecTree -> IO SpecState
+evaluate around tree = evaluateTree tree neutral around 0

@@ -4,7 +4,6 @@ module Specdris.SpecIO
 
 import Specdris.Console
 
-import public Specdris.Data.SpecAction
 import public Specdris.Data.SpecState
 import public Specdris.Data.SpecResult
 
@@ -16,15 +15,16 @@ import public Specdris.Expectations
 
 ||| Adds a context/description to the spec test. It can have
 ||| nested descriptions or spec cases.
-describe: (description : String) -> SpecAction -> SpecAction
-describe descr actions = do (Describe descr)
-                            actions
+describe: (description : String) -> SpecTree -> SpecTree
+describe descr tree = Node (Leaf $ printDescrIO descr)
+                           (tree)
 
 ||| Adds a spec case to the spec test. Spec cases consist only
 ||| of expectations. Nested spec cases or descriptions are not
 ||| allowed.
-it : (description : String) -> IO SpecResult -> SpecAction
-it descr spec = It descr spec
+it : (description : String) -> IO SpecResult -> SpecTree
+it descr spec = Node (Leaf $ printItIO descr)
+                     (Leaf spec)
 
 ||| Empty `IO` effect
 defaultIO : IO ()
@@ -43,14 +43,14 @@ specWithState : {default defaultIO beforeAll : IO ()} ->
                 {default defaultIO afterAll : IO ()} ->
                 {default noAround around : IO SpecResult -> IO SpecResult} ->
 
-                SpecAction -> 
+                SpecTree -> 
                 IO SpecState
-specWithState {beforeAll} {around} actions {afterAll}
+specWithState {beforeAll} {around} tree {afterAll}
   = do beforeAll
-       state <- evaluate around actions
+       state <- evaluate around tree
        afterAll
        
-       putStrLn (stateToStr state)       
+       putStrLn (stateToStr state)
        pure state
   where
     stateToStr : SpecState -> String
@@ -70,8 +70,8 @@ spec : {default defaultIO beforeAll : IO ()} ->
        {default defaultIO afterAll : IO ()} ->
        {default noAround around : IO SpecResult -> IO SpecResult} ->
        
-       SpecAction ->
+       SpecTree ->
        IO ()
-spec {beforeAll} {around} actions {afterAll}
-  = do specWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} actions
+spec {beforeAll} {around} tree {afterAll}
+  = do specWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} tree
        pure ()

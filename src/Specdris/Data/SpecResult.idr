@@ -3,6 +3,7 @@ module Specdris.Data.SpecResult
 import Specdris.Console
 
 %access export
+%default total
 
 public export
 data SpecResult : Type where     
@@ -28,3 +29,9 @@ namespace SpecResultDo
   (>>=) (UnaryFailure actual reason) _           = (UnaryFailure actual reason)
   (>>=) (BinaryFailure actual expected reason) _ = (BinaryFailure actual expected reason)
   (>>=) result f                                 = f result
+
+printDescrIO : (message: String) -> IO SpecResult
+printDescrIO message = pure $ Print message "" White
+
+printItIO : (message: String) -> IO SpecResult
+printItIO message = pure $ Print message " +" White

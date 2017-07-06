@@ -7,7 +7,6 @@ modules = Specdris.Spec,
           Specdris.Core,
           Specdris.Console,
           Specdris.Expectations,
-          Specdris.Data.SpecAction,
           Specdris.Data.SpecResult,
           Specdris.Data.SpecState
 

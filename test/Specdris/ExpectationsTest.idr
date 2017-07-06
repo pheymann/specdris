@@ -1,6 +1,5 @@
 module Specdris.ExpectationsTest
 
-import Specdris.Data.SpecAction
 import Specdris.Data.SpecResult
 import Specdris.Data.SpecState
 
@@ -12,8 +11,9 @@ import Specdris.TestUtil
 %access private
 %default total
 
-it : (description : String) -> SpecResult -> SpecAction
-it descr spec = It descr (pure spec)
+it : (description : String) -> SpecResult -> SpecTree
+it descr spec = Node (Leaf $ printDescrIO descr)
+                     (Leaf $ pure spec)
 
 showTestCase : String -> String
 showTestCase test = "expectation_" ++ test
