@@ -7,19 +7,19 @@ import Specdris.Spec
 main : IO ()
 main = spec $ do
   describe "This is my math test" $ do
-    it "adds to natural numbers" $ do
+    it "adds two natural numbers" $ do
       (1 + 1) `shouldBe` 2
-    it "multiplies to natural numbers" $ do
+    it "multiplies two natural numbers" $ do
       (2 * 2) `shouldBe` 3
-    it "do fancy stuf with complex numbers" $ do
+    it "do fancy stuff with complex numbers" $ do
       pendingWith "do this later"
 ```
 You can also nest `describe`. When executed this spec it will produce the following output:
 
 ```
 This is my math test
-  + adds to natural numbers
-  + multiplies to natural numbers
+  + adds two natural numbers
+  + multiplies two natural numbers
     [x] 4 /= 3 -- red
   + do fancy stuff with complex numbers
     [] pending: do this later -- yellow
