@@ -8,7 +8,7 @@ import Specdris.Console
 %access export
 %default total
 
-||| Tree data structure with elements only in the leafs.
+||| BTree with elements in the leafs.
 public export
 data Tree : Type -> Type where
      Leaf : (elem : a) -> Tree a
@@ -49,8 +49,7 @@ updateStateAndPrint (BinaryFailure a b reason) state level = do putStrLn (format
    a final `SpecState`.-}
 evaluateTree : SpecTree -> SpecState -> (around : IO SpecResult -> IO SpecResult) -> (level : Nat) -> IO SpecState
 evaluateTree (Leaf specIO) state around level 
-  = do result <- (around specIO)
-       updateStateAndPrint result state level
+  = updateStateAndPrint !(around specIO) state level
                                           
 evaluateTree (Node left right) state around level 
   = case left of

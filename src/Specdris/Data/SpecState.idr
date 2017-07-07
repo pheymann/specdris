@@ -2,13 +2,15 @@ module Specdris.Data.SpecState
 
 %access export
 
+%default total
+
 public export
 record SpecState where
   constructor MkState
   
   totalNum : Nat
-  failed   : Nat -- TODO make it a Fin
-  pending  : Nat -- TODO make it a Fin
+  failed   : Nat
+  pending  : Nat
   
 Eq SpecState where
   (==) (MkState lTotal lFailed lPend) (MkState rTotal rFailed rPend) 
@@ -28,12 +30,12 @@ Monoid SpecState where
 
 total
 addSpec : SpecState -> SpecState
-addSpec (MkState totalNum failed pending) = MkState (totalNum + 1) failed pending
+addSpec state = record {totalNum $= (+ 1)} state
 
 total
 addFailure : SpecState -> SpecState
-addFailure (MkState totalNum failed pending) = MkState (totalNum + 1) (failed + 1) pending
+addFailure state = record {totalNum $= (+ 1), failed $= (+ 1)} state
 
 total
 addPending : SpecState -> SpecState
-addPending (MkState totalNum failed pending) = MkState (totalNum + 1) failed (pending + 1)
+addPending state = record {totalNum $= (+ 1), pending $= (+ 1)} state
