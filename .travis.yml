@@ -1,10 +1,9 @@
-language: haskell
+language: generic
 
-before_install:
-  - cabal update
+os: osx
 
 install:
-  - cabal install idris
+  - brew install idris
 
 script:
   - ./project --testCI
