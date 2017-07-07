@@ -1,4 +1,4 @@
-module Specdris.Console
+module Specdris.ConsoleColor
 
 %access export
 %default total

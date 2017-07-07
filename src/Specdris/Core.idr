@@ -1,9 +1,8 @@
 module Specdris.Core
 
+import Specdris.Data.SpecInfo
 import Specdris.Data.SpecResult
 import Specdris.Data.SpecState
-
-import Specdris.Console
 
 %access export
 %default total
@@ -16,41 +15,20 @@ data Tree : Type -> Type where
 
 public export
 SpecTree : Type
-SpecTree = Tree (IO SpecResult)
+SpecTree = Tree (Either SpecInfo (IO SpecResult))
 
 namespace SpecTreeDo
   (>>=) : SpecTree -> (() -> SpecTree) -> SpecTree
   (>>=) leftTree f = let rightTree = f () in
                          Node leftTree rightTree
 
-{- Prints the description for `describe`, `it`, `pending` or the failure message
-   to the console. Depending on the result of the spec case the `SpecState` 
-   will be changed.-}
-private
-updateStateAndPrint : SpecResult -> SpecState -> (level : Nat) -> IO SpecState
-updateStateAndPrint (Print line sign color) state level = do putStrLn (format (sign ++ " " ++ line) color level)
-                                                             pure state
-
-updateStateAndPrint (Pending message) state level = let output = case message of
-                                                                   (Just msg) => format (" [] pending: " ++ msg) Yellow (level + 1)
-                                                                   Nothing    => format " [] pending" Yellow (level + 1) in
-                                                        do putStrLn output
-                                                           pure (addPending state)
-
-updateStateAndPrint Success state level = pure (addSpec state)
-
-updateStateAndPrint (UnaryFailure val reason) state level  = do putStrLn (format (" [x] " ++ show val ++ " " ++ reason) Red (level + 1))
-                                                                pure (addFailure state)
-                                                                
-updateStateAndPrint (BinaryFailure a b reason) state level = do putStrLn (format (" [x] " ++ show a ++ " " ++ reason ++ " " ++ show b) Red (level + 1))
-                                                                pure (addFailure state)
-
 {- Evaluates every leaf in the `SpecTree` and folds the different `IO`s to collect
    a final `SpecState`.-}
 evaluateTree : SpecTree -> SpecState -> (around : IO SpecResult -> IO SpecResult) -> (level : Nat) -> IO SpecState
-evaluateTree (Leaf specIO) state around level 
-  = updateStateAndPrint !(around specIO) state level
-                                          
+evaluateTree (Leaf (Left info)) state _ level         = do evalInfo info level
+                                                           pure state
+evaluateTree (Leaf (Right specIO)) state around level = evalResult !(around specIO) state level
+
 evaluateTree (Node left right) state around level 
   = case left of
         (Leaf _) => do newState <- evaluateTree left state around (level + 1)

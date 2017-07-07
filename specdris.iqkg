@@ -5,8 +5,9 @@ sourcedir = src
 modules = Specdris.Spec,
           Specdris.SpecIO,
           Specdris.Core,
-          Specdris.Console,
+          Specdris.Data.ConsoleColor,
           Specdris.Expectations,
+          Specdris.Data.SpecInfo,
           Specdris.Data.SpecResult,
           Specdris.Data.SpecState
 
