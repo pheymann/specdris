@@ -1,5 +1,7 @@
+language: bash
+
 os: osx
- install:
-   - brew install idris
- script:
-   - ./project --testCI
+install:
+  - brew install idris
+script:
+  - ./project --testCI
