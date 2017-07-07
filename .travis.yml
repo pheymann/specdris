@@ -1,7 +1,6 @@
-language: bash
+language: Haskell
 
-os: osx
 install:
-  - brew install idris
+  - cabal install idris
 script:
   - ./project --testCI
