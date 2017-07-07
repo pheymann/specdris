@@ -6,6 +6,8 @@ import Specdris.Data.SpecState
 %access export
 %default total
 
+||| Result of a single `Expectation`s or `Pending` if none
+||| exists.
 public export
 data SpecResult : Type where     
      Pending : (message : Maybe String) -> SpecResult
@@ -28,6 +30,12 @@ namespace SpecResultDo
   (>>=) (BinaryFailure actual expected reason) _ = (BinaryFailure actual expected reason)
   (>>=) result f                                 = f result
 
+{- Evaluates a given expectation result in updates the `SpecState` accordingly:
+     - `Success` : increase spec count
+     - `Failure` : increase spec and failure count
+     - `Pending` : encrease spec and pending count
+   Furthermore it prints the result to console.
+ -}
 evalResult : SpecResult -> SpecState -> (level : Nat) -> IO SpecState
 evalResult (Pending msg) state level = let output = case msg of
                                                       (Just msg) => format (" [] pending: " ++ msg) Yellow (level + 1)
@@ -37,7 +45,7 @@ evalResult (Pending msg) state level = let output = case msg of
                                               pure (addPending state)
 
 evalResult Success state _ = pure $ addSpec state
-evalResult (UnaryFailure val reason) state level  = do putStrLn (format (" [x] " ++ show val ++ " " ++ reason) Red (level + 1))
+evalResult (UnaryFailure a reason) state level    = do putStrLn (format (" [x] " ++ show a ++ " " ++ reason) Red (level + 1))
                                                        pure (addFailure state)
                                                                 
 evalResult (BinaryFailure a b reason) state level = do putStrLn (format (" [x] " ++ show a ++ " " ++ reason ++ " " ++ show b) Red (level + 1))
