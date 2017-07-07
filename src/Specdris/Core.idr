@@ -23,7 +23,8 @@ namespace SpecTreeDo
                          Node leftTree rightTree
 
 {- Evaluates every leaf in the `SpecTree` and folds the different `IO`s to collect
-   a final `SpecState`.-}
+   a final `SpecState`.
+ -}
 evaluateTree : SpecTree -> SpecState -> (around : IO SpecResult -> IO SpecResult) -> (level : Nat) -> IO SpecState
 evaluateTree (Leaf (Left info)) state _ level         = do evalInfo info level
                                                            pure state
