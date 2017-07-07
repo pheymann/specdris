@@ -16,7 +16,7 @@ import public Specdris.Expectations
 ||| Adds a context/description to the spec test. It can have
 ||| nested descriptions or spec cases.
 describe: (description : String) -> SpecAction -> SpecAction
-describe descr actions = do (Describe descr)
+describe descr actions = do Describe descr
                             actions
 
 ||| Adds a spec case to the spec test. Spec cases consist only
