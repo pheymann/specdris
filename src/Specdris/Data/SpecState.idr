@@ -1,9 +1,10 @@
 module Specdris.Data.SpecState
 
 %access export
-
 %default total
 
+||| Global state of all spec cases which are executed
+||| together (monadicly combined).
 public export
 record SpecState where
   constructor MkState
