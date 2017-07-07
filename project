@@ -16,6 +16,19 @@ test()
     cd test; idris --testpkg ${test}; cd ..
 }
 
+testCI()
+{
+    output=$(test)
+    $(echo -e ${output})
+
+    if $(echo -e ${output}) | grep -q "\[failed\]"; then
+        echo "FAILURE"
+        exit 1
+    else
+        echo "SUCCESS"
+    fi
+}
+
 buildNoTest()
 {
     echo "build project"
@@ -48,6 +61,9 @@ case $1 in
         ;;
     "--test")
         test
+        ;;
+    "--testCI")
+        testCI
         ;;
     "--install")
         install
