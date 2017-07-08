@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/pheymann/specdris?branch=master)](https://travis-ci.org/pheymann/specdris)
+
 # specdris
 With this framework you can write spec-like **Unit Tests** in Idris:
 
