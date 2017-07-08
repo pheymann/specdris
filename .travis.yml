@@ -1,15 +1,14 @@
-dist: trusty
-sudo: required
-
 language: generic
 
+os: linux
+
+sudo: required
+
+services:
+  - docker
+
 before_install:
-  - sudo apt-get update
-install:
-  - sudo apt-get install cabal-install
-  - cabal update
-  - cabal install idris
-  - PATH=$HOME/.cabal/bin:$PATH
+  - docker pull pheymann/idris-travis:test
 
 script:
-  - ./project --testCI
+  - docker run -v $(pwd):/var/idris-project pheymann/idris-travis:test ./project --testCI
