@@ -31,14 +31,13 @@ specWithState : SpecTree -> IO SpecState
 specWithState tree
   = do state <- evaluate (\spec => spec) tree
        
-       putStrLn (stateToStr state)
+       putStrLn $ "\n" ++ stateToStr state
        pure state
   where
     stateToStr : SpecState -> String
     stateToStr state
       = colorise (if failed state == 0 then Green else Red) $
-          "\n" 
-            ++ indent 1
+          indent 1
             ++ (if failed state == 0 then "Passed" else "Failed") ++ ": "
             ++ show state
 
