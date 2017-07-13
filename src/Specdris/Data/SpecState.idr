@@ -13,7 +13,7 @@ record SpecState where
   failed   : Nat
   pending  : Nat
   
-  output   : Maybe String
+  output   : Maybe (List String)
   
 Eq SpecState where
   (==) (MkState lTotal lFailed lPend lOut) (MkState rTotal rFailed rPend rOut)
@@ -40,5 +40,17 @@ addFailure state = record {totalNum $= (+ 1), failed $= (+ 1)} state
 addPending : SpecState -> SpecState
 addPending state = record {totalNum $= (+ 1), pending $= (+ 1)} state
 
+private
+mergeOutput: Maybe (List String) -> Maybe (List String) -> Maybe (List String)
+mergeOutput (Just left) (Just right) = Just $ left <+> right
+mergeOutput a@(Just left) Nothing    = a
+mergeOutput Nothing b@(Just left)    = b
+mergeOutput Nothing Nothing          = Nothing
+
 addLine : (line : String) -> SpecState -> SpecState
-addLine line state = record {output $= (<+> (Just line))} state
+addLine line state = record {output $= (\o => mergeOutput o (Just [line]))} state
+
+outputToStr : SpecState -> Maybe String
+outputToStr state = case output state of
+                      (Just out) => Just $ foldl (\acc, line => acc ++ line ++ "\n") "" out
+                      Nothing    => Nothing

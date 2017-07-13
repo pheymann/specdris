@@ -1,13 +1,7 @@
 module Specdris.SpecIOTest
 
 import Specdris.SpecIO
-
-testAndPrint : SpecState -> (totalNum : Nat) -> (failed : Nat) -> (pending : Nat) -> IO ()
-testAndPrint state totNum failedNum pendNum 
-  = if (totalNum state) /= totNum || (failed state) /= failedNum || (pending state) /= pendNum then
-      putStrLn "\n    [failed]"
-    else
-      putStrLn "\n    [success]"
+import Specdris.TestUtil
 
 testCase : IO ()
 testCase
@@ -27,7 +21,7 @@ testCase
                it "context 1.4" $ do
                  pure $ pendingWith "for some reason"
        
-       testAndPrint state 4 3 1
+       testAndPrint "spec io test" state (MkState 4 3 1 Nothing) (==)
 
 withBeforeAndAfterAll : IO ()
 withBeforeAndAfterAll
@@ -36,7 +30,8 @@ withBeforeAndAfterAll
                     it "context 1.1" $ do
                       pure $ 1 === 1
 
-       testAndPrint state 1 0 0
+       testAndPrint "spec io test with before and after all" state (MkState 1 0 0 Nothing) (==)
+       
 
 around : IO SpecResult -> IO SpecResult
 around spec = do putStrLn "before"
@@ -53,7 +48,7 @@ withAround
                       putStrLn "      => expectation"
                       pure $ 1 === 1
        
-       testAndPrint state 1 0 0
+       testAndPrint "spec io test with around" state (MkState 1 0 0 Nothing) (==)
 
 export
 specSuite : IO ()

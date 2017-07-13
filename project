@@ -21,7 +21,7 @@ testCI()
     output=$(test)
     $(echo -e ${output})
 
-    if $(echo -e ${output}) | grep -q "\[failed\]"; then
+    if $(echo -e ${output}) | grep -q " - FAILED"; then
         echo "FAILURE"
         exit 1
     else
