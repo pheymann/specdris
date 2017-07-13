@@ -24,16 +24,9 @@ Show SpecState where
     = "Total = " ++ show totalNum 
         ++ ", Failed = " ++ show failed 
         ++ ", Pending = " ++ show pending
-
-private
-mergeOutput : Maybe String -> Maybe String -> Maybe String
-mergeOutput (Just a) (Just b)   = Just (a ++ b)
-mergeOutput ja@(Just a) Nothing = ja
-mergeOutput Nothing jb@(Just b) = jb
-mergeOutput Nothing Nothing     = Nothing
-
+        
 Semigroup SpecState where
-  (<+>) (MkState lt lf lp lo) (MkState rt rf rp ro) = MkState (lt + rt) (lf + rf) (lp + rp) (mergeOutput lo ro)
+  (<+>) (MkState lt lf lp lo) (MkState rt rf rp ro) = MkState (lt + rt) (lf + rf) (lp + rp) (lo <+> ro)
 
 Monoid SpecState where
   neutral = MkState 0 0 0 Nothing
@@ -48,4 +41,4 @@ addPending : SpecState -> SpecState
 addPending state = record {totalNum $= (+ 1), pending $= (+ 1)} state
 
 addLine : (line : String) -> SpecState -> SpecState
-addLine line state = record {output $= (\o => mergeOutput o (Just line))} state
+addLine line state = record {output $= (<+> (Just line))} state
