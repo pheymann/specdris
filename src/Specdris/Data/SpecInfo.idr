@@ -15,6 +15,6 @@ data SpecInfo : Type where
 {- Evaluates the given `SpecInfo` by printing the formatted
    information to console.
  -}
-evalInfo : SpecInfo -> (level : Nat) -> IO ()
-evalInfo (Describe msg) level = putStrLn (format msg White level)
-evalInfo (It msg)       level = putStrLn (format ("+ " ++ msg) White level)
+evalInfo : SpecInfo -> (level : Nat) -> String
+evalInfo (Describe msg) level = format msg White level
+evalInfo (It msg)       level = format ("+ " ++ msg) White level
