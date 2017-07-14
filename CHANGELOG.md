@@ -1,3 +1,6 @@
+### v0.2.1
+ - modified error output
+ 
 ### v0.2.0
  - store output in `SpecState` if `storeOutput = True` in `spec` and `specIO` (not printed to the console)
  - return exit code `1` if at least one test case if failing
