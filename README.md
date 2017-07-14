@@ -107,3 +107,12 @@ around resultIO = do putStrLn "hello"
 
 specIO {around = around} $ do
 ```
+
+### Working with SpecState
+It is possible to get the [SpecState](https://github.com/pheymann/specdris/blob/master/src/Specdris/Data/SpecState.idr#L8-L16)
+record of a spec after its execution by using `specWithState` from *Spec* or *SpecIO*.
+
+#### Storing Console Output in SpecState
+If you want to process the output after spec execution you can store it in [SpecState](https://github.com/pheymann/specdris/blob/master/src/Specdris/Data/SpecState.idr#L8-L16)
+by setting `spec {storeOutput = True}` or `specIO {storeOutput = True}`. This also stops *specdris* from printing
+it to the console.
