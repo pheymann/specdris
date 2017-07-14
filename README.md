@@ -98,7 +98,7 @@ Takes a function `IO SpecResult -> IO SpecResult` which can be used to execute `
 before and after every test case:
 
 ```Idris
-around : IO SpecResult -> SpecResult
+around : IO SpecResult -> IO SpecResult
 around resultIO = do putStrLn "hello"
                      result <- resultIO
                      putStrLn "bye"
