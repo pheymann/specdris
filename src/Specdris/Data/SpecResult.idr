@@ -24,6 +24,19 @@ Eq SpecResult where
   (==) (BinaryFailure _ _ aReason) (BinaryFailure _ _ bReason) = aReason == bReason
   (==) _ _ = False
 
+
+private
+show : SpecResult -> (level : Nat) -> String
+show (Pending message) _ = case message of
+                             (Just msg) => " [] pending: " ++ msg
+                             Nothing    => " [] pending"
+show Success _ = ""
+show (UnaryFailure actual reason) level           = " [x] " ++ reason ++ 
+                                                    "\n     " ++ indent(level) ++ "actual: " ++ show actual
+show (BinaryFailure actual expected reason) level = " [x] " ++ reason ++ 
+                                                    "\n     " ++ indent(level) ++ "actual:   " ++ show actual ++ 
+                                                    "\n     " ++ indent(level) ++ "expected: " ++ show expected
+  
 namespace SpecResultDo
   (>>=) : SpecResult -> (SpecResult -> SpecResult) -> SpecResult
   (>>=) (UnaryFailure actual reason) _           = (UnaryFailure actual reason)
@@ -45,15 +58,12 @@ handleOutput output state store = if store then
    Furthermore it prints the result to console if `storeOutput == False`.
  -}
 evalResult : SpecResult -> SpecState -> (storeOutput : Bool) -> (level : Nat) -> IO SpecState
-evalResult (Pending msg) state store level = let output = (case msg of
-                                                            (Just msg) => format (" [] pending: " ++ msg) Yellow (level + 1)
-                                                            Nothing    => format " [] pending" Yellow (level + 1)
-                                                          ) in
-                                                 pure $ addPending !(handleOutput output state store)
+evalResult r@(Pending msg) state store level = let output = format (show r $ level + 1) Yellow (level + 1) in
+                                                   pure $ addPending !(handleOutput output state store)
 
 evalResult Success state _ _ = pure $ addSpec state
-evalResult (UnaryFailure a reason) state store level    = let output = format (" [x] " ++ show a ++ " " ++ reason) Red (level + 1) in
-                                                              pure $ addFailure !(handleOutput output state store)
+evalResult r@(UnaryFailure a reason) state store level    = let output = format (show r $ level + 1) Red (level + 1) in
+                                                                pure $ addFailure !(handleOutput output state store)
                                                                 
-evalResult (BinaryFailure a b reason) state store level = let output = format (" [x] " ++ show a ++ " " ++ reason ++ " " ++ show b) Red (level + 1) in
-                                                              pure $ addFailure !(handleOutput output state store)
+evalResult r@(BinaryFailure a b reason) state store level = let output = format (show r $ level + 1) Red (level + 1) in
+                                                                pure $ addFailure !(handleOutput output state store)

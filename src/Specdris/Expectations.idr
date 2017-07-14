@@ -22,7 +22,7 @@ shouldBe : (Eq a, Show a) => (actual : a) -> (expected : a) -> SpecResult
 shouldBe actual expected = if actual == expected then
                              Success
                            else
-                             BinaryFailure actual expected "/="
+                             BinaryFailure actual expected "not equal"
 
 infixr 7 ===
 
@@ -35,7 +35,7 @@ shouldNotBe : (Eq a, Show a) => (actual : a) -> (expected : a) -> SpecResult
 shouldNotBe actual expected = if actual /= expected then
                                 Success
                               else
-                                BinaryFailure actual expected "=="
+                                BinaryFailure actual expected "equal"
 
 infixr 7 /==
 
