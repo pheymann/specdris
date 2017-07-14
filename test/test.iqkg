@@ -5,8 +5,10 @@ opts = "--sourcepath ../src/ --idrispath ../src/"
 modules = Specdris.SpecTest,
           Specdris.SpecIOTest,
           Specdris.ExpectationsTest,
+          Specdris.OutputTest,
           Specdris.TestUtil
 
 tests = Specdris.ExpectationsTest.specSuite,
         Specdris.SpecTest.specSuite,
-        Specdris.SpecIOTest.specSuite
+        Specdris.SpecIOTest.specSuite,
+        Specdris.OutputTest.specSuite

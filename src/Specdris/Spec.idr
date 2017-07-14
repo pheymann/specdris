@@ -27,9 +27,9 @@ it descr spec = Node (Leaf $ Left $ It $ descr)
                      (Leaf $ Right $ pure spec)
 
 ||| Executes a spec test and prints the result to the command line.
-specWithState : SpecTree -> IO SpecState
-specWithState tree
-  = do state <- evaluate (\spec => spec) tree
+specWithState : {default False storeOutput : Bool} -> SpecTree -> IO SpecState
+specWithState {storeOutput} tree
+  = do state <- evaluate (\spec => spec) storeOutput tree
        
        putStrLn $ "\n" ++ stateToStr state
        pure state

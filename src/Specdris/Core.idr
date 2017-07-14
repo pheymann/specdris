@@ -25,17 +25,26 @@ namespace SpecTreeDo
 {- Evaluates every leaf in the `SpecTree` and folds the different `IO`s to collect
    a final `SpecState`.
  -}
-evaluateTree : SpecTree -> SpecState -> (around : IO SpecResult -> IO SpecResult) -> (level : Nat) -> IO SpecState
-evaluateTree (Leaf (Left info)) state _ level         = do evalInfo info level
-                                                           pure state
-evaluateTree (Leaf (Right specIO)) state around level = evalResult !(around specIO) state level
+evaluateTree : SpecTree -> 
+               SpecState -> 
+               (around : IO SpecResult -> IO SpecResult) -> 
+               (storeOutput : Bool) -> 
+               (level : Nat) -> 
+               IO SpecState
+evaluateTree (Leaf (Left info)) state _ store level         = let out = evalInfo info level in
+                                                                  if store then
+                                                                    pure $ addLine out state
+                                                                  else do 
+                                                                    putStrLn out
+                                                                    pure state
+evaluateTree (Leaf (Right specIO)) state around store level = evalResult !(around specIO) state store level
 
-evaluateTree (Node left right) state around level 
+evaluateTree (Node left right) state around store level 
   = case left of
-        (Leaf _) => do newState <- evaluateTree left state around (level + 1)
-                       evaluateTree right newState around (level + 1)
-        _        => do newState <- evaluateTree left state around level
-                       evaluateTree right newState around level
+        (Leaf _) => do newState <- evaluateTree left state around store (level + 1)
+                       evaluateTree right newState around store (level + 1)
+        _        => do newState <- evaluateTree left state around store level
+                       evaluateTree right newState around store level
 
-evaluate : (around : IO SpecResult -> IO SpecResult) -> SpecTree -> IO SpecState
-evaluate around tree = evaluateTree tree neutral around 0
+evaluate : (around : IO SpecResult -> IO SpecResult) -> (storeOutput : Bool) -> SpecTree -> IO SpecState
+evaluate around store tree = evaluateTree tree neutral around store 0

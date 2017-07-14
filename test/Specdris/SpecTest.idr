@@ -1,13 +1,7 @@
 module Specdris.SpecTest
 
 import Specdris.Spec
-
-testAndPrint : SpecState -> (totalNum : Nat) -> (failed : Nat) -> (pending : Nat) -> IO ()
-testAndPrint state totNum failedNum pendNum 
-  = if (totalNum state) /= totNum || (failed state) /= failedNum || (pending state) /= pendNum then
-      putStrLn "\n    [failed]"
-    else
-      putStrLn "\n    [success]"
+import Specdris.TestUtil
 
 testCase : IO ()
 testCase
@@ -25,7 +19,7 @@ testCase
                it "context 1.4" $ do
                  pendingWith "for some reason"
        
-       testAndPrint state 4 3 1
+       testAndPrint "spec test" state (MkState 4 3 1 Nothing) (==)
 
 export
 specSuite : IO ()

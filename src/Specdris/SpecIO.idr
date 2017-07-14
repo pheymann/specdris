@@ -43,12 +43,13 @@ noAround spec = spec
 specWithState : {default defaultIO beforeAll : IO ()} ->
                 {default defaultIO afterAll : IO ()} ->
                 {default noAround around : IO SpecResult -> IO SpecResult} ->
-
+                {default False storeOutput : Bool} ->
+                
                 SpecTree -> 
                 IO SpecState
-specWithState {beforeAll} {around} tree {afterAll}
+specWithState {beforeAll} {around} tree {afterAll} {storeOutput}
   = do beforeAll
-       state <- evaluate around tree
+       state <- evaluate around storeOutput tree
        afterAll
        
        putStrLn $ "\n" ++ stateToStr state
@@ -69,9 +70,10 @@ specWithState {beforeAll} {around} tree {afterAll}
 spec : {default defaultIO beforeAll : IO ()} ->
        {default defaultIO afterAll : IO ()} ->
        {default noAround around : IO SpecResult -> IO SpecResult} ->
+       {default False storeOutput : Bool} ->
        
        SpecTree ->
        IO ()
-spec {beforeAll} {around} tree {afterAll}
-  = do specWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} tree
+spec {beforeAll} {around} tree {afterAll} {storeOutput}
+  = do specWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
        pure ()
