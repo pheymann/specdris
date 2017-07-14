@@ -8,4 +8,4 @@ services:
   - docker
 
 script:
-  - docker run -v $(pwd):/var/idris-project pheymann/idris-travis:1.0 ./project --testCI
+  - docker run -v $(pwd):/var/idris-project pheymann/idris-travis:1.0 ./project --test

@@ -1,0 +1,9 @@
+package examples
+
+pkgs = specdris
+
+modules = SpecExample,
+          SpecIOExample
+
+tests = SpecExample.specSuite,
+        SpecIOExample.specSuite

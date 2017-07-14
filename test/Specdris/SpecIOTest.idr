@@ -5,7 +5,7 @@ import Specdris.TestUtil
 
 testCase : IO ()
 testCase
-  = do state <- specWithState $ do
+  = do state <- specIOWithState $ do
              describe "context 1" $ do
                describe "context 1.1" $ do
                  it "context 1.1.1" $ do
@@ -25,7 +25,7 @@ testCase
 
 withBeforeAndAfterAll : IO ()
 withBeforeAndAfterAll
-  = do state <- specWithState {beforeAll = putStrLn "beforeAll"} {afterAll = putStrLn "afterAll"} $ do
+  = do state <- specIOWithState {beforeAll = putStrLn "beforeAll"} {afterAll = putStrLn "afterAll"} $ do
                   describe "context 1" $ do
                     it "context 1.1" $ do
                       pure $ 1 === 1
@@ -42,7 +42,7 @@ around spec = do putStrLn "before"
 
 withAround : IO ()
 withAround
-  = do state <- specWithState {around = around} $ do
+  = do state <- specIOWithState {around = around} $ do
                   describe "context 1" $ do
                     it "context 1.1" $ do
                       putStrLn "      => expectation"

@@ -2,6 +2,8 @@
 ||| io code.
 module Specdris.SpecIO
 
+import System
+
 import public Specdris.Data.SpecState
 import public Specdris.Data.SpecResult
 import public Specdris.Data.SpecInfo
@@ -40,14 +42,14 @@ noAround spec = spec
 ||| @ beforeAll `IO` effect which will be executed before the spec test (optional)
 ||| @ afterAll  `IO` effect which will be executed after the spec test (optional)
 ||| @ around a function to perform effects before/after every spec case (optional)
-specWithState : {default defaultIO beforeAll : IO ()} ->
-                {default defaultIO afterAll : IO ()} ->
-                {default noAround around : IO SpecResult -> IO SpecResult} ->
-                {default False storeOutput : Bool} ->
+specIOWithState : {default defaultIO beforeAll : IO ()} ->
+                  {default defaultIO afterAll : IO ()} ->
+                  {default noAround around : IO SpecResult -> IO SpecResult} ->
+                  {default False storeOutput : Bool} ->
                 
-                SpecTree -> 
-                IO SpecState
-specWithState {beforeAll} {around} tree {afterAll} {storeOutput}
+                  SpecTree -> 
+                  IO SpecState
+specIOWithState {beforeAll} {around} tree {afterAll} {storeOutput}
   = do beforeAll
        state <- evaluate around storeOutput tree
        afterAll
@@ -67,13 +69,16 @@ specWithState {beforeAll} {around} tree {afterAll} {storeOutput}
 ||| @ beforeAll `IO` effect which will be executed before the spec test (optional)
 ||| @ afterAll  `IO` effect which will be executed after the spec test (optional)
 ||| @ around a function to perform effects before/after every spec case (optional)
-spec : {default defaultIO beforeAll : IO ()} ->
-       {default defaultIO afterAll : IO ()} ->
-       {default noAround around : IO SpecResult -> IO SpecResult} ->
-       {default False storeOutput : Bool} ->
+specIO : {default defaultIO beforeAll : IO ()} ->
+         {default defaultIO afterAll : IO ()} ->
+         {default noAround around : IO SpecResult -> IO SpecResult} ->
+         {default False storeOutput : Bool} ->
        
-       SpecTree ->
-       IO ()
-spec {beforeAll} {around} tree {afterAll} {storeOutput}
-  = do specWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
-       pure ()
+         SpecTree ->
+         IO ()
+specIO {beforeAll} {around} tree {afterAll} {storeOutput}
+  = do state <- specIOWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
+       if (failed state) > 0 then
+         exitFailure
+       else
+         pure ()

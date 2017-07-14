@@ -1,6 +1,8 @@
 ||| Central module use to import the Specdris test framework
 module Specdris.Spec
 
+import System
+
 import public Specdris.Data.SpecState
 import public Specdris.Data.SpecResult
 import public Specdris.Data.SpecInfo
@@ -44,5 +46,8 @@ specWithState {storeOutput} tree
 ||| Executes a spec test and prints the result to the command line.
 spec : SpecTree -> IO ()
 spec tree
-  = do specWithState tree
-       pure ()
+  = do state <- specWithState tree
+       if (failed state) > 0 then
+         exitFailure
+       else
+         pure ()
