@@ -22,7 +22,7 @@ You can also nest `describe`. When executed this spec it will produce the follow
 This is my math test
   + adds two natural numbers
   + multiplies two natural numbers
-    [x] not equal --read
+    [x] not equal --red
         actual:   4
         expected: 3
   + do fancy stuff with complex numbers
