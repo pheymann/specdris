@@ -13,20 +13,16 @@ clean()
 test()
 {
     echo "test project"
-    cd test; idris --testpkg ${test}; cd ..
-}
+    cd test
+    idris --testpkg ${test}
 
-testCI()
-{
-    output=$(test)
-    $(echo -e ${output})
-
-    if $(echo -e ${output}) | grep -q " - FAILED"; then
+    if [[ $? -eq 0 ]]; then
+        echo "SUCCESSFUL"
+    else
         echo "FAILURE"
         exit 1
-    else
-        echo "SUCCESS"
     fi
+    cd ..
 }
 
 buildNoTest()
@@ -46,7 +42,13 @@ install()
     echo "install project"
     clean
     test
-    idris --install ${project}
+
+    if [[ $? -eq 0 ]]; then
+        idris --install ${project}
+    else
+        echo "couldn't install project > something went wrong"
+        exit 1
+    fi
 }
 
 case $1 in
@@ -61,9 +63,6 @@ case $1 in
         ;;
     "--test")
         test
-        ;;
-    "--testCI")
-        testCI
         ;;
     "--install")
         install
