@@ -4,12 +4,13 @@ import Specdris.Spec
 import Specdris.TestUtil
 
 expected : List String
-expected = ["\ESC[37m  context 1\ESC[0m", "\ESC[37m    context 1.1\ESC[0m",
-            "\ESC[37m      + context 1.1.1\ESC[0m",
-            "\ESC[31m         [x] 1 /= 2\ESC[0m",
-            "\ESC[37m    + context 1.2\ESC[0m",
-            "\ESC[31m       [x] 1 /= 2\ESC[0m",
-            "\ESC[37m    + context 1.3\ESC[0m",
+expected = ["\ESC[37m  context 1\ESC[0m", 
+            "\ESC[37m    context 1.1\ESC[0m", 
+            "\ESC[37m      + context 1.1.1\ESC[0m", 
+            "\ESC[31m         [x] not equal\n             actual:   1\n             expected: 2\ESC[0m", 
+            "\ESC[37m    + context 1.2\ESC[0m", 
+            "\ESC[31m       [x] not equal\n           actual:   1\n           expected: 2\ESC[0m", 
+            "\ESC[37m    + context 1.3\ESC[0m", 
             "\ESC[33m       [] pending: for some reason\ESC[0m"]
 
 testCase : IO ()
