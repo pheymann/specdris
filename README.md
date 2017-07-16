@@ -110,6 +110,18 @@ around resultIO = do putStrLn "hello"
 specIO {around = around} $ do
 ```
 
+### Creating your own Expectations
+If you need other expections than these provided [here](https://github.com/pheymann/specdris/blob/master/src/Specdris/Expectations.idr) 
+you can implement them as follows:
+
+```Idris
+shouldParse: (Show a, Eq, a) => Parser -> (actual : String) -> (expected : a) -> SpecResult
+shouldParse: parser actual expected 
+  = case parser actual of
+      (Right result) => result === expected
+      (Left err)     => UnaryFailure actual $ "couldn't parse: " ++ err
+```
+
 ### Working with SpecState
 It is possible to get the [SpecState](https://github.com/pheymann/specdris/blob/master/src/Specdris/Data/SpecState.idr#L8-L16)
 record of a spec after its execution by using `specWithState` from *Spec* or *SpecIO*.
