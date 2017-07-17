@@ -48,6 +48,8 @@ main = specIO $ do
 You can find more information about `SpecIO` [here](#specio).
 
 ## Install
+This testing framework is written with `Idris 1.0`.
+
 Clone the repo from github with `git clone https://github.com/pheymann/specdris.git` and run:
 
 ```
