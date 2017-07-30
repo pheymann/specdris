@@ -1,3 +1,6 @@
+### v0.2.2
+ - fixed *.ipkg file name
+
 ### v0.2.1
  - modified error output
  
