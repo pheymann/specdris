@@ -1,5 +1,7 @@
 module Specdris.Data.SpecState
 
+import Specdris.Data.ConsoleColor
+
 %access export
 %default total
 
@@ -54,3 +56,10 @@ outputToStr : SpecState -> Maybe String
 outputToStr state = case output state of
                       (Just out) => Just $ foldl (\acc, line => acc ++ line ++ "\n") "" out
                       Nothing    => Nothing
+
+stateToStr : SpecState -> String
+stateToStr state
+  = colorise (if failed state == 0 then Green else Red) $
+      indent 1
+         ++ (if failed state == 0 then "Passed" else "Failed") ++ ": "
+         ++ show state
