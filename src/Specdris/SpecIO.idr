@@ -37,7 +37,7 @@ defaultIO = pure ()
 noAround : IO SpecResult -> IO SpecResult
 noAround spec = spec
 
-||| Executes a spec test and prints the result to the command line.
+||| Executes a spec test.
 |||
 ||| @ beforeAll `IO` effect which will be executed before the spec test (optional)
 ||| @ afterAll  `IO` effect which will be executed after the spec test (optional)
@@ -53,16 +53,8 @@ specIOWithState {beforeAll} {around} tree {afterAll} {storeOutput}
   = do beforeAll
        state <- evaluate around storeOutput tree
        afterAll
-       
-       putStrLn $ "\n" ++ stateToStr state
+
        pure state
-  where
-    stateToStr : SpecState -> String
-    stateToStr state
-      = colorise (if failed state == 0 then Green else Red) $
-          indent 1
-            ++ (if failed state == 0 then "Passed" else "Failed") ++ ": "
-            ++ show state
 
 ||| Executes a spec test and prints the result to the command line.
 |||
@@ -78,6 +70,9 @@ specIO : {default defaultIO beforeAll : IO ()} ->
          IO ()
 specIO {beforeAll} {around} tree {afterAll} {storeOutput}
   = do state <- specIOWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
+    
+       putStrLn $ "\n" ++ stateToStr state
+       
        if (failed state) > 0 then
          exitFailure
        else
