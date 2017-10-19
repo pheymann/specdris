@@ -24,6 +24,31 @@ namespace SpecTreeDo
 
 {- Evaluates every leaf in the `SpecTree` and folds the different `IO`s to collect
    a final `SpecState`.
+   
+   Test:
+     describe "a" $ do
+       describe "b" $ do
+         it "c" test_io_c
+       it "d" test_io_d
+   
+   Tree from Test:
+                        Node
+                         |
+         ----------------------------------
+         |                                |
+    Leaf Desc "a"                        Node
+                                          |
+                                 ---------------------         
+                                 |                   |
+                                Node                Node
+                                 |                   |
+                       -------------               --------------- 
+                       |           |               |             |
+                 Leaf Desc "b"    Node        Leaf It "d"  Leaf test_io_d
+                                   |
+                            ----------------
+                            |              |
+                       Leaf It "c"   Leaf test_io_c
  -}
 evaluateTree : SpecTree -> 
                SpecState -> 
