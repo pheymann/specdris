@@ -1,6 +1,9 @@
 ### Current
  - added `shuffle` for random test case execution
 
+### v0.2.3
+ - moved console logging to `spec` and `specIO` from `specWithState`, `specIOWithState`
+
 ### v0.2.2
  - fixed *.ipkg file name
 
