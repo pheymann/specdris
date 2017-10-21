@@ -2,6 +2,8 @@ module SpecExample
 
 import Specdris.Spec
 
+import System
+
 %access export
 %default total
 
@@ -29,6 +31,10 @@ multiSpec = describe "Multiply two Nats" $ do
               it "be commutative" $ do
                 (1 `multi` 2) === (2 `multi` 1)
 
+partial
 specSuite : IO ()
-specSuite = spec $ do addSpec
-                      multiSpec
+specSuite = do seed <- System.time
+               spec $ do addSpec
+                         multiSpec
+                         (shuffle multiSpec 999999)
+                         (shuffle multiSpec seed)

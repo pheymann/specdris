@@ -112,6 +112,29 @@ around resultIO = do putStrLn "hello"
 specIO {around = around} $ do
 ```
 
+### Shuffle/Randomise Test Case Execution
+You can randomise your test case execution by applying `shuffle` to your spec:
+
+```Idris
+mySpec : SpecTree
+mySpec = 
+  describe "my test"
+    it "a" $ 1 === 1
+    it "b" $ 2 === 2
+
+-- default seed
+spec $ shuffle mySpec
+
+-- static seed
+spec $ shuffle mySpec 1000
+
+-- current time
+do seed <- System.time
+   spec $ shuffle mySpec seed
+```
+
+`shuffle` only changes execution order for tests (`it`) under a `decribe` and thus preserves the logical test structure.
+
 ### Creating your own Expectations
 If you need other expections than these provided [here](https://github.com/pheymann/specdris/blob/master/src/Specdris/Expectations.idr) 
 you can implement them as follows:
