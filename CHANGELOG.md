@@ -1,3 +1,6 @@
+### Current
+ - added `shuffle` for random test case execution
+
 ### v0.2.2
  - fixed *.ipkg file name
 
