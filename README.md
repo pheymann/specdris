@@ -55,6 +55,9 @@ Clone the repo from github with `git clone https://github.com/pheymann/specdris.
 ```
 cd specdris
 ./project --install
+
+# under windows
+.\Project.ps1 --install
 ```
 
 ## Documentation
