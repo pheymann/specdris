@@ -24,7 +24,7 @@ describe descr tree = Node (Leaf $ Left $ Describe descr)
 ||| Adds a spec case to the spec test. Spec cases consist only
 ||| of expectations. Nested spec cases or descriptions are not
 ||| allowed.
-it : (description : String) -> SpecResult -> SpecTree
+it : (description : String) -> SpecResult () -> SpecTree
 it descr spec = Node (Leaf $ Left $ It $ descr)
                      (Leaf $ Right $ pure spec)
 
@@ -37,9 +37,9 @@ specWithState {storeOutput} tree
 spec : SpecTree -> IO ()
 spec tree
   = do state <- specWithState tree
-  
+
        putStrLn $ "\n" ++ stateToStr state
-       
+
        if (failed state) > 0 then
          exitFailure
        else
