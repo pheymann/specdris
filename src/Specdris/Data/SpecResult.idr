@@ -9,39 +9,40 @@ import Specdris.Data.SpecState
 ||| Result of a single `Expectation`s or `Pending` if none
 ||| exists.
 public export
-data SpecResult : Type where     
-     Pending : (message : Maybe String) -> SpecResult
-     
-     Success : SpecResult
-     
-     UnaryFailure : Show a => (val : a) -> (reason : String) -> SpecResult
-     BinaryFailure : (Show a, Show b) => (left : a) -> (right : b) -> (reason : String) -> SpecResult
+data SpecResult : Type -> Type where
+     Pending : x -> (message : Maybe String) -> SpecResult x
 
-Eq SpecResult where
-  (==) (Pending aMsg) (Pending bMsg)                           = aMsg == bMsg
-  (==) Success Success                                         = True
+     Success : x -> SpecResult x
+
+     UnaryFailure : Show a => (val : a) -> (reason : String) -> SpecResult x
+     BinaryFailure : (Show a, Show b) => (left : a) -> (right : b) -> (reason : String) -> SpecResult x
+
+Eq (SpecResult x) where
+  (==) (Pending _ aMsg) (Pending _ bMsg)                       = aMsg == bMsg
+  (==) (Success _) (Success _)                                 = True
   (==) (UnaryFailure _ aReason) (UnaryFailure _ bReason)       = aReason == bReason
   (==) (BinaryFailure _ _ aReason) (BinaryFailure _ _ bReason) = aReason == bReason
   (==) _ _ = False
 
 
 private
-show : SpecResult -> (level : Nat) -> String
-show (Pending message) _ = case message of
-                             (Just msg) => " [] pending: " ++ msg
-                             Nothing    => " [] pending"
-show Success _ = ""
-show (UnaryFailure actual reason) level           = " [x] " ++ reason ++ 
+show : SpecResult x -> (level : Nat) -> String
+show (Pending _ message) _ = case message of
+                               (Just msg) => " [] pending: " ++ msg
+                               Nothing    => " [] pending"
+show (Success _) _ = ""
+show (UnaryFailure actual reason) level           = " [x] " ++ reason ++
                                                     "\n     " ++ indent(level) ++ "actual: " ++ show actual
-show (BinaryFailure actual expected reason) level = " [x] " ++ reason ++ 
-                                                    "\n     " ++ indent(level) ++ "actual:   " ++ show actual ++ 
+show (BinaryFailure actual expected reason) level = " [x] " ++ reason ++
+                                                    "\n     " ++ indent(level) ++ "actual:   " ++ show actual ++
                                                     "\n     " ++ indent(level) ++ "expected: " ++ show expected
-  
+
 namespace SpecResultDo
-  (>>=) : SpecResult -> (SpecResult -> SpecResult) -> SpecResult
+  (>>=) : SpecResult x -> (x -> SpecResult y) -> SpecResult y
   (>>=) (UnaryFailure actual reason) _           = (UnaryFailure actual reason)
   (>>=) (BinaryFailure actual expected reason) _ = (BinaryFailure actual expected reason)
-  (>>=) result f                                 = f result
+  (>>=) (Success x) f                            = f x
+  (>>=) (Pending x _) f                          = f x
 
 private
 handleOutput : String -> SpecState -> (storeOutput : Bool) -> IO SpecState
@@ -57,13 +58,13 @@ handleOutput output state store = if store then
      - `Pending` : encrease spec and pending count
    Furthermore it prints the result to console if `storeOutput == False`.
  -}
-evalResult : SpecResult -> SpecState -> (storeOutput : Bool) -> (level : Nat) -> IO SpecState
-evalResult r@(Pending msg) state store level = let output = format (show r $ level + 1) Yellow (level + 1) in
+evalResult : SpecResult () -> SpecState -> (storeOutput : Bool) -> (level : Nat) -> IO SpecState
+evalResult r@(Pending x msg) state store level = let output = format (show {x = ()} r $ level + 1) Yellow (level + 1) in
                                                    pure $ addPending !(handleOutput output state store)
 
-evalResult Success state _ _ = pure $ addSpec state
-evalResult r@(UnaryFailure a reason) state store level    = let output = format (show r $ level + 1) Red (level + 1) in
+evalResult (Success _) state _ _ = pure $ addSpec state
+evalResult r@(UnaryFailure a reason) state store level    = let output = format (show {x = ()} r $ level + 1) Red (level + 1) in
                                                                 pure $ addFailure !(handleOutput output state store)
-                                                                
-evalResult r@(BinaryFailure a b reason) state store level = let output = format (show r $ level + 1) Red (level + 1) in
+
+evalResult r@(BinaryFailure a b reason) state store level = let output = format (show {x = ()} r $ level + 1) Red (level + 1) in
                                                                 pure $ addFailure !(handleOutput output state store)

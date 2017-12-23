@@ -25,7 +25,7 @@ describe descr tree = Node (Leaf $ Left $ Describe descr)
 ||| Adds a spec case to the spec test. Spec cases consist only
 ||| of expectations. Nested spec cases or descriptions are not
 ||| allowed.
-it : (description : String) -> IO SpecResult -> SpecTree
+it : (description : String) -> IO (SpecResult ()) -> SpecTree
 it descr spec = Node (Leaf $ Left $ It  descr)
                      (Leaf $ Right spec)
 
@@ -34,7 +34,7 @@ defaultIO : IO ()
 defaultIO = pure ()
 
 ||| No `around` effect, just returns the given spec case
-noAround : IO SpecResult -> IO SpecResult
+noAround : IO (SpecResult ()) -> IO (SpecResult ())
 noAround spec = spec
 
 ||| Executes a spec test.
@@ -44,10 +44,10 @@ noAround spec = spec
 ||| @ around a function to perform effects before/after every spec case (optional)
 specIOWithState : {default defaultIO beforeAll : IO ()} ->
                   {default defaultIO afterAll : IO ()} ->
-                  {default noAround around : IO SpecResult -> IO SpecResult} ->
+                  {default noAround around : IO (SpecResult ()) -> IO (SpecResult ())} ->
                   {default False storeOutput : Bool} ->
-                
-                  SpecTree -> 
+
+                  SpecTree ->
                   IO SpecState
 specIOWithState {beforeAll} {around} tree {afterAll} {storeOutput}
   = do beforeAll
@@ -63,16 +63,16 @@ specIOWithState {beforeAll} {around} tree {afterAll} {storeOutput}
 ||| @ around a function to perform effects before/after every spec case (optional)
 specIO : {default defaultIO beforeAll : IO ()} ->
          {default defaultIO afterAll : IO ()} ->
-         {default noAround around : IO SpecResult -> IO SpecResult} ->
+         {default noAround around : IO (SpecResult ()) -> IO (SpecResult ())} ->
          {default False storeOutput : Bool} ->
-       
+
          SpecTree ->
          IO ()
 specIO {beforeAll} {around} tree {afterAll} {storeOutput}
   = do state <- specIOWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
-    
+
        putStrLn $ "\n" ++ stateToStr state
-       
+
        if (failed state) > 0 then
          exitFailure
        else
