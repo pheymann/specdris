@@ -57,3 +57,6 @@ shouldSatisfy actual pred = if pred actual then
                               Success
                             else
                               UnaryFailure actual "doesn't satisfy predicate"
+
+shouldBeWith : (actual : a) -> (expectation : a -> SpecResult) -> SpecResult
+shouldBeWith actual expectation = expectation actual
