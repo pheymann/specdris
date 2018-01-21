@@ -47,6 +47,9 @@ main = specIO $ do
 
 You can find more information about `SpecIO` [here](#specio).
 
+Both `spec` and `specIO` have backend-agnostic versions, respectively `spec'`
+and `specIO'`, that use `IO'` rather than `IO`.
+
 ## Install
 This testing framework is written with `Idris 1.0`.
 
