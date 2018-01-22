@@ -54,23 +54,21 @@ testSatisfy
        testAndPrint "satisfy" state1 (MkState 1 0 0 Nothing) (==)
        testAndPrint "satisfy" state2 (MkState 1 1 0 Nothing) (==)
 
-record ComplexType where
-  constructor MkType
+testShouldBeJust : IO ()
+testShouldBeJust
+  = do state1 <- evaluate noAround False $ test (showTestCase "shouldBeJust") $ (Just "hello") `shouldBeJust` (=== "hello")
+       state2 <- evaluate noAround False $ test (showTestCase "shouldBeJust") $ Nothing `shouldBeJust` (=== "world")
   
-  a : Nat
-  b : String
+       testAndPrint "shouldBeJust" state1 (MkState 1 0 0 Nothing) (==)
+       testAndPrint "shouldBeJust" state2 (MkState 1 1 0 Nothing) (==)
 
-testShouldBeWith : IO ()
-testShouldBeWith
-  = do state1 <- evaluate noAround False $ test (showTestCase "shouldBeWith") $ (MkType 1 "hello") `shouldBeWith` (\x => do 
-         a x === 1
-         b x === "hello")
-       state2 <- evaluate noAround False $ test (showTestCase "shouldBeWith") $ (MkType 1 "hello") `shouldBeWith` (\x => do 
-         a x === 1
-         b x === "world")
+testShouldBeNothing : IO ()
+testShouldBeNothing
+  = do state1 <- evaluate noAround False $ test (showTestCase "shouldBeNothing") $ (shouldBeNothing (Just "hello"))
+       state2 <- evaluate noAround False $ test (showTestCase "shouldBeNothing") $ shouldBeNothing {a = String} Nothing
   
-       testAndPrint "shouldBeWith" state1 (MkState 1 0 0 Nothing) (==)
-       testAndPrint "shouldBeWith" state2 (MkState 1 1 0 Nothing) (==)
+       testAndPrint "shouldBeNothing" state1 (MkState 1 1 0 Nothing) (==)
+       testAndPrint "shouldBeNothing" state2 (MkState 1 0 0 Nothing) (==)
 
 export
 specSuite : IO ()
@@ -79,4 +77,5 @@ specSuite = do putStrLn "\n  expectations:"
                testEqual
                testUnequal
                testSatisfy
-               testShouldBeWith
+               testShouldBeJust
+               testShouldBeNothing
