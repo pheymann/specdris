@@ -1,0 +1,7 @@
+package js-examples
+
+pkgs = specdris
+
+executable = "js-example.js"
+main = Main
+opts = "--codegen javascript"

@@ -6,3 +6,5 @@ project~
 
 # idris
 *.ibc
+
+js-examples/*.js
