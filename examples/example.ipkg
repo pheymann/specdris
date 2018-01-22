@@ -2,9 +2,6 @@ package examples
 
 pkgs = specdris
 
-executable = js_example.js
-main = Main
-
 modules = SpecExample,
           SpecIOExample
 

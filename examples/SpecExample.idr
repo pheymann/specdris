@@ -10,7 +10,7 @@ import System
 add : Nat -> Nat -> Nat
 add a b = a + b
 
-addSpec : SpecTree' ffi
+addSpec : SpecTree
 addSpec = describe "Add two Nats" $ do
             it "neutral element" $ do
               (1 `add` 0) === 1
@@ -22,7 +22,7 @@ addSpec = describe "Add two Nats" $ do
 multi : Nat -> Nat -> Nat
 multi a b = a * b
 
-multiSpec : SpecTree' ffi
+multiSpec : SpecTree
 multiSpec = describe "Multiply two Nats" $ do
               it "neutral element" $ do
                 (2 `multi` 1) === 2
@@ -32,8 +32,9 @@ multiSpec = describe "Multiply two Nats" $ do
                 (1 `multi` 2) === (2 `multi` 1)
 
 partial
-specSuite : IO' ffi ()
-specSuite = spec' $ do addSpec
-                       multiSpec
-                       (shuffle multiSpec 999999)
-                       (shuffle multiSpec 12345)
+specSuite : IO ()
+specSuite = do seed <- System.time
+               spec $ do addSpec
+                         multiSpec
+                         (shuffle multiSpec 999999)
+                         (shuffle multiSpec seed)

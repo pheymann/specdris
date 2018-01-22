@@ -5,16 +5,16 @@ import Specdris.SpecIO
 %access private
 %default total
 
-startDb : IO' ffi ()
-startDb = putStrLn' "start database ..."
+startDb : IO ()
+startDb = putStrLn "start database ..."
 
-stopDb : IO' ffi ()
-stopDb = putStrLn' "... stoped database"
+stopDb : IO ()
+stopDb = putStrLn "... stoped database"
 
-testData : IO' ffi SpecResult -> IO' ffi SpecResult
-testData resultIO = do putStrLn' "insert test data"
+testData : IO SpecResult -> IO SpecResult
+testData resultIO = do putStrLn "insert test data"
                        result <- resultIO
-                       putStrLn' "delete test data"
+                       putStrLn "delete test data"
                        
                        pure result
 
@@ -24,10 +24,10 @@ record User where
   id : Nat
   name : String
 
-getUser : Nat -> IO' ffi User
+getUser : Nat -> IO User
 getUser id = pure (MkUser id "foo")
 
-getUserSpec : SpecTree' ffi
+getUserSpec : SpecTree
 getUserSpec = describe "User table" $ do
                 it "get a user by id" $ do
                   user <- getUser 0
@@ -35,6 +35,6 @@ getUserSpec = describe "User table" $ do
                   pure $ do (name user) === "foo"
 
 export
-specSuite : IO' ffi ()
-specSuite = specIO' {beforeAll = startDb} {around = testData} {afterAll = stopDb} $ do 
+specSuite : IO ()
+specSuite = specIO {beforeAll = startDb} {around = testData} {afterAll = stopDb} $ do 
               getUserSpec
