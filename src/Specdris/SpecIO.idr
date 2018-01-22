@@ -62,12 +62,12 @@ specIOWithState {beforeAll} {around} tree {afterAll} {storeOutput}
 ||| @ afterAll  `IO' ffi` effect which will be executed after the spec test (optional)
 ||| @ around a function to perform effects before/after every spec case (optional)
 specIO' : {default defaultIO beforeAll : IO' ffi ()} ->
-         {default defaultIO afterAll : IO' ffi ()} ->
-         {default noAround around : IO' ffi SpecResult -> IO' ffi SpecResult} ->
-         {default False storeOutput : Bool} ->
+          {default defaultIO afterAll : IO' ffi ()} ->
+          {default noAround around : IO' ffi SpecResult -> IO' ffi SpecResult} ->
+          {default False storeOutput : Bool} ->
        
-         SpecTree' ffi ->
-         IO' ffi ()
+          SpecTree' ffi ->
+          IO' ffi ()
 specIO' {beforeAll} {around} tree {afterAll} {storeOutput}
   = do state <- specIOWithState {beforeAll = beforeAll} {afterAll = afterAll} {around = around} {storeOutput = storeOutput} tree
        putStrLn' $ "\n" ++ stateToStr state
