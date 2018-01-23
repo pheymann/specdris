@@ -1,5 +1,9 @@
 ### Current
+
+### v.0.3.0
  - added `shuffle` for random test case execution
+ - support of `IO'` for different compiler backends
+ - extended expectations
 
 ### v0.2.3
  - moved console logging to `spec` and `specIO` from `specWithState`, `specIOWithState`
