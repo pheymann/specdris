@@ -58,10 +58,12 @@ shouldSatisfy actual pred = if pred actual then
                             else
                               UnaryFailure actual "doesn't satisfy predicate"
 
+||| Checks if the given `Maybe` element is `Just` and satisfies further expectations
 shouldBeJust : Show a => (actual : Maybe a) -> (expectation : a -> SpecResult) -> SpecResult
 shouldBeJust (Just a) expectation = expectation a
 shouldBeJust {a} Nothing _        = UnaryFailure (Nothing {a}) "is not `Just`"
 
+||| Checks if the given `Maybe` element is `Nothing`
 shouldBeNothing : Show a => (actual: Maybe a) -> SpecResult
 shouldBeNothing Nothing = Success
 shouldBeNothing actual  = UnaryFailure actual "is not `Nothing`"
