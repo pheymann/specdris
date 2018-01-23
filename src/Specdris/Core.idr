@@ -14,11 +14,16 @@ data Tree : Type -> Type where
      Node : (left : Tree a) -> (right : Tree a) -> Tree a
 
 public export
+SpecTree' : FFI -> Type
+SpecTree' ffi = Tree (Either SpecInfo (IO' ffi SpecResult))
+
+public export
 SpecTree : Type
-SpecTree = Tree (Either SpecInfo (IO SpecResult))
+SpecTree = SpecTree' FFI_C
+
 
 namespace SpecTreeDo
-  (>>=) : SpecTree -> (() -> SpecTree) -> SpecTree
+  (>>=) : SpecTree' ffi -> (() -> SpecTree' ffi) -> SpecTree' ffi
   (>>=) leftTree f = let rightTree = f () in
                          Node leftTree rightTree
 
@@ -50,18 +55,18 @@ namespace SpecTreeDo
                             |              |
                        Leaf It "c"   Leaf test_io_c
  -}
-evaluateTree : SpecTree -> 
+evaluateTree : SpecTree' ffi ->
                SpecState -> 
-               (around : IO SpecResult -> IO SpecResult) -> 
+               (around : IO' ffi SpecResult -> IO' ffi SpecResult) ->
                (storeOutput : Bool) -> 
                (level : Nat) -> 
-               IO SpecState
+               IO' ffi SpecState
 -- description or it
 evaluateTree (Leaf (Left info)) state _ store level         = let out = evalInfo info level in
                                                                   if store then
                                                                     pure $ addLine out state
                                                                   else do 
-                                                                    putStrLn out
+                                                                    putStrLn' out
                                                                     pure state
 
 -- test case
@@ -77,7 +82,7 @@ evaluateTree (Node left right) state around store level
         _        => do newState <- evaluateTree left state around store level
                        evaluateTree right newState around store level
 
-evaluate : (around : IO SpecResult -> IO SpecResult) -> (storeOutput : Bool) -> SpecTree -> IO SpecState
+evaluate : (around : IO' ffi SpecResult -> IO' ffi SpecResult) -> (storeOutput : Bool) -> SpecTree' ffi -> IO' ffi SpecState
 evaluate around store tree = evaluateTree tree neutral around store 0
 
 randomBase : Integer
@@ -91,7 +96,7 @@ randomDouble seed = let value = randomInt seed in
                       (cast {to = Double} value) / (cast {to = Double} randomBase)
 
 partial
-shuffle : {default randomDouble rand : Integer -> Double} -> SpecTree -> (seed : Integer) -> SpecTree
+shuffle : {default randomDouble rand : Integer -> Double} -> SpecTree' ffi -> (seed : Integer) -> SpecTree' ffi
 shuffle {rand} (Node left@(Leaf _) right@(Leaf _)) seed          = Node left right
 shuffle {rand} (Node left@(Leaf (Left (Describe _))) right) seed = Node left (shuffle {rand = rand} right seed)
 shuffle {rand} (Node left@(Node _ _) right@(Node _ _)) seed      = let randVal  = rand seed 

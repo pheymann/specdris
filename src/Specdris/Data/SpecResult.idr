@@ -44,11 +44,11 @@ namespace SpecResultDo
   (>>=) result f                                 = f result
 
 private
-handleOutput : String -> SpecState -> (storeOutput : Bool) -> IO SpecState
+handleOutput : String -> SpecState -> (storeOutput : Bool) -> IO' ffi SpecState
 handleOutput output state store = if store then
                                     pure $ addLine output state
                                   else do
-                                    putStrLn output
+                                    putStrLn' output
                                     pure state
 
 {- Evaluates a given expectation result in updates the `SpecState` accordingly:
@@ -57,7 +57,7 @@ handleOutput output state store = if store then
      - `Pending` : encrease spec and pending count
    Furthermore it prints the result to console if `storeOutput == False`.
  -}
-evalResult : SpecResult -> SpecState -> (storeOutput : Bool) -> (level : Nat) -> IO SpecState
+evalResult : SpecResult -> SpecState -> (storeOutput : Bool) -> (level : Nat) -> IO' ffi SpecState
 evalResult r@(Pending msg) state store level = let output = format (show r $ level + 1) Yellow (level + 1) in
                                                    pure $ addPending !(handleOutput output state store)
 
