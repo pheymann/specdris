@@ -67,13 +67,14 @@ cd specdris
 ### Expectations
 Currently this framework provides you with:
 
-|Expecation|Alias|Description|
+|Expectation|Alias|Description|
 |----------|-----|-----------|
 |`a shouldBe b`|`===`|is `a` equal to `b`|
 |`a shouldNotBe b`|`/==`|is `a` unequal to `b`|
 |`a shouldBeTrue`| |is `a` `True`|
 |`a shouldBeFalse` | | is `a` `False`|
 |`a shouldSatisfy pred`| | satisfies `a` a given predicate|
+|`a shouldBeJust exp` | | if `a` is `Just a'` apply `exp` to `a'`; here `exp` is again a sequence of expectations |
 
 ### Failed Test Cases
 If an expectations in a test case failes the following expectations aren't executed and the

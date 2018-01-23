@@ -54,6 +54,22 @@ testSatisfy
        testAndPrint "satisfy" state1 (MkState 1 0 0 Nothing) (==)
        testAndPrint "satisfy" state2 (MkState 1 1 0 Nothing) (==)
 
+testShouldBeJust : IO ()
+testShouldBeJust
+  = do state1 <- evaluate noAround False $ test (showTestCase "shouldBeJust") $ (Just "hello") `shouldBeJust` (=== "hello")
+       state2 <- evaluate noAround False $ test (showTestCase "shouldBeJust") $ Nothing `shouldBeJust` (=== "world")
+  
+       testAndPrint "shouldBeJust" state1 (MkState 1 0 0 Nothing) (==)
+       testAndPrint "shouldBeJust" state2 (MkState 1 1 0 Nothing) (==)
+
+testShouldBeNothing : IO ()
+testShouldBeNothing
+  = do state1 <- evaluate noAround False $ test (showTestCase "shouldBeNothing") $ (shouldBeNothing (Just "hello"))
+       state2 <- evaluate noAround False $ test (showTestCase "shouldBeNothing") $ shouldBeNothing {a = String} Nothing
+  
+       testAndPrint "shouldBeNothing" state1 (MkState 1 1 0 Nothing) (==)
+       testAndPrint "shouldBeNothing" state2 (MkState 1 0 0 Nothing) (==)
+
 export
 specSuite : IO ()
 specSuite = do putStrLn "\n  expectations:"
@@ -61,3 +77,5 @@ specSuite = do putStrLn "\n  expectations:"
                testEqual
                testUnequal
                testSatisfy
+               testShouldBeJust
+               testShouldBeNothing
