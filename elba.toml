@@ -3,7 +3,7 @@ name = "git/specdris"
 version = "0.1.0"
 authors = ["Paul Heymann"]
 description = "A testing library for Idris"
-license = "BSD3"
+license = "MIT"
 
 [targets.lib]
 path = "src"
