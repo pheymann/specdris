@@ -1,0 +1,19 @@
+[package]
+name = "git/specdris"
+version = "0.1.0"
+authors = ["Paul Heymann"]
+description = "A testing library for Idris"
+license = "BSD3"
+
+[targets.lib]
+path = "src"
+mods = [ "Specdris.Spec"
+       , "Specdris.SpecIO"
+       , "Specdris.Core"
+       , "Specdris.Data.ConsoleColor"
+       , "Specdris.Expectations"
+       , "Specdris.Data.SpecInfo"
+       , "Specdris.Data.SpecResult"
+       , "Specdris.Data.SpecState"
+       ]
+idris_opts = ["--warnreach"]
