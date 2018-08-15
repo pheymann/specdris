@@ -1,5 +1,5 @@
 [package]
-name = "git/specdris"
+name = "pheymann/specdris"
 version = "0.1.0"
 authors = ["Paul Heymann"]
 description = "A testing library for Idris"

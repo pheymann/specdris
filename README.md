@@ -63,6 +63,20 @@ cd specdris
 .\Project.ps1 --install
 ```
 
+### elba
+If you use [elba](https://github.com/elba/elba) to manage your Idris packages,
+you can also add specdris as a dev-dependency to be run during tests. Just add
+the following to the `[dev_dependencies]` section of your package's
+`elba.toml` manifest:
+
+```toml
+[dev_dependencies]
+# snip
+"pheymann/specdris" = { git = "https://github.com/pheymann/specdris" }
+```
+
+Then you'll be able to use specdris from all test targets.
+
 ## Documentation
 ### Expectations
 Currently this framework provides you with:
